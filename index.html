@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        input {
+            padding: 5px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 6px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Testing</h1>
+    <div>
+        <input type="text" id="messageInput" placeholder="Enter a message">
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+    
+    <h2>Received Messages</h2>
+    <div id="output"></div>
+
+    <script>
+        // Open WebSocket connection
+        const ws = new WebSocket('wss://your-websocket-server-url'); // Replace with your WebSocket server URL
+
+        ws.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        ws.onmessage = (event) => {
+            const output = document.getElementById('output');
+            output.innerHTML += `<p>${event.data}</p>`;
+            output.scrollTop = output.scrollHeight; // Auto-scroll to the latest message
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        ws.onerror = (error) => {
+            console.error('WebSocket Error: ', error);
+        };
+
+        // Function to send message
+        function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (message && ws.readyState === WebSocket.OPEN) {
+                ws.send(message);
+                document.getElementById('messageInput').value = ''; // Clear input after sending
+            } else {
+                console.error('WebSocket is not open or message is empty');
+            }
+        }
+    </script>
+</body>
+</html>
